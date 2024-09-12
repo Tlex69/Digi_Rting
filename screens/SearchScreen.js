@@ -25,10 +25,10 @@ export default function SearchScreen() {
         query: value,
         include_adult: 'false',
         language: 'en-US',
+        language: 'th-TH',
         page: '1'
       }).then(data => {
         setLoading(false);
-        //console.log('got movies: ',data);
         if (data && data.results) setResults(data.results);
       })
     } else {

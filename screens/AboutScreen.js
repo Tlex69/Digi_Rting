@@ -1,9 +1,8 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Linking, TouchableOpacity } from 'react-native';
-import { ThemeContext } from './ThemeContext'; // Import ThemeContext
-
+import { ThemeContext } from './ThemeContext'; 
 export default function AboutScreen() {
-    const { isDarkMode } = useContext(ThemeContext); // Access theme context
+    const { isDarkMode } = useContext(ThemeContext);
 
     return (
         <ScrollView style={[styles.container, { backgroundColor: isDarkMode ? '#ffffff' : '#1f1f1f' }]}>

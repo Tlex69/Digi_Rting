@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { StatusBar, StyleSheet, Text, View, TouchableOpacity, ScrollView, Modal, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Bars3CenterLeftIcon, MagnifyingGlassIcon } from 'react-native-heroicons/outline';
+import { Bars3CenterLeftIcon, MagnifyingGlassIcon, LightBulbIcon   } from 'react-native-heroicons/outline';
 import TrendingMovies from '../components/trendingMovies';
 import MovieList from '../components/movieList';
 import Loading from '../components/loading';
 import { useNavigation } from '@react-navigation/native';
 import { fetchTopRatedMovies, fetchTrendingMovies, fetchUpcomingMovies } from '../api/moviedb';
-import { ThemeContext } from './ThemeContext'; // Ensure this path is correct
+import { ThemeContext } from './ThemeContext'; 
 
 export default function HomeScreen() {
     const [trending, setTrending] = useState([]);
@@ -16,7 +16,7 @@ export default function HomeScreen() {
     const [loading, setLoading] = useState(true);
     const [modalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation();
-    const { isDarkMode } = useContext(ThemeContext); // Access theme context
+    const { isDarkMode } = useContext(ThemeContext); 
 
     useEffect(() => {
         getTrendingMovies();
@@ -47,7 +47,6 @@ export default function HomeScreen() {
 
     return (
         <View style={[styles.container, { backgroundColor: isDarkMode ? '#ffffff' : '#1c1c1e' }]}>
-            {/* search bar and logo */}
             <SafeAreaView style={styles.safeArea}>
                 <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
                 <View style={styles.header}>
@@ -87,22 +86,23 @@ export default function HomeScreen() {
                 </Pressable>
             </Modal>
 
-            {
-                loading ? (
-                    <Loading />
-                ) : (
-                    <ScrollView
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{ paddingBottom: 10 }}
-                    >
-                        {trending.length > 0 && <TrendingMovies data={trending} />}
-                        {/* upcoming movies row */}
-                        <MovieList title="Upcoming" data={upcoming} />
-                        {/* top rated movies row */}
-                        <MovieList title="Top Rated" data={topRated} />
-                    </ScrollView>
-                )
-            }
+            {loading ? (
+                <Loading />
+            ) : (
+                <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 10 }}
+                >
+                    {trending.length > 0 && <TrendingMovies data={trending} />}
+                    <MovieList title="Upcoming" data={upcoming} />
+                    <MovieList title="Top Rated" data={topRated} />
+                </ScrollView>
+            )}
+
+            {/* Floating button positioned absolutely */}
+            <TouchableOpacity style={styles.floatingButton} onPress={() => navigation.navigate('Recom')}>
+    <LightBulbIcon   size={30} color="white" />
+</TouchableOpacity>
         </View>
     );
 }
@@ -129,6 +129,23 @@ const styles = StyleSheet.create({
         color: '#eab308',
         fontSize: 24,
         fontWeight: 'bold',
+    },
+    floatingButton: {
+        position: 'absolute',
+        bottom: 30,
+        right: 3,
+        backgroundColor: '#eab308',
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.8,
+        shadowRadius: 2,
+        elevation: 5,
+        zIndex: 100, 
     },
     modalBackground: {
         flex: 1,

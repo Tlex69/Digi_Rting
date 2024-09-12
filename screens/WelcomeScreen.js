@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   loginButton: {
-    backgroundColor: '#eab308', // equivalent to bg-yellow-400
+    backgroundColor: '#eab308', 
     paddingVertical: 15,
     paddingHorizontal: 30,
     borderRadius: 15,

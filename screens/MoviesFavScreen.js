@@ -98,7 +98,7 @@ export default function MoviesFavScreen() {
                             item={item}
                             onPress={handlePress}
                             onRemove={removeFromFavourites}
-                            isDarkMode={isDarkMode}  // Pass isDarkMode to MovieItem
+                            isDarkMode={isDarkMode}  
                         />
                     )}
                     keyExtractor={(item) => item.id.toString()}

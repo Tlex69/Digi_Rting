@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import React, { useContext } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { ThemeContext } from './ThemeContext'; // Path to your ThemeContext
+import { ThemeContext } from './ThemeContext'; 
 
 export default function UserScreen() {
     const navigation = useNavigation();
@@ -13,7 +13,6 @@ export default function UserScreen() {
     }
 
     const handleSignOut = () => {
-        // Add sign-out logic here if needed
         navigation.navigate('Welcome');
     }
 

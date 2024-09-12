@@ -8,7 +8,6 @@ import { useNavigation } from '@react-navigation/native';
 export default function RegisterScreen() {
   const navigation = useNavigation();
 
-  // State variables for the input fields
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

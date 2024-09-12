@@ -18,6 +18,7 @@ import ForgotScreen from '../screens/ForgotScreen';
 import ManageScreen from '../screens/ManageScreen';
 import AboutScreen from '../screens/AboutScreen';
 import { ThemeProvider } from '../screens/ThemeContext'; // Path to your ThemeContext
+import MovieRecommendationScreen from '../screens/RandomMoviesScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -34,12 +35,13 @@ export default function AppNavigation() {
                 <Stack.Screen name="Forgot"  component={ForgotScreen} />
 
                 <Stack.Screen name="Register" options={{ headerShown: false }} component={RegisterScreen} />
-                
+                <Stack.Screen name="Recom" options={{ headerShown: false }} component={MovieRecommendationScreen} />
+
                 <Stack.Screen name="Home" options={{ headerShown: false }} component={HomeScreen} />
                 <Stack.Screen name="Movie" options={{ headerShown: false }} component={MovieScreen} />
                 <Stack.Screen name="Person" options={{ headerShown: false }} component={PersonScreen} />
                 <Stack.Screen name="Search" options={{ headerShown: false }} component={SearchScreen} />
-               
+
                 <Stack.Screen
                     name="User"
                     component={UserScreen}
