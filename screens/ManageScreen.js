@@ -1,11 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext,useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from './ThemeContext'; // Import the ThemeContext
+import { doc, getDoc } from 'firebase/firestore';
+import { auth,db } from '../Firebase';
 
 export default function ManageAccountScreen() {
-  const [email, setEmail] = useState('example@example.com');
-  const [name, setName] = useState('John Doe');
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const navigation = useNavigation();
   const { isDarkMode } = useContext(ThemeContext); // Access the theme context
 
@@ -26,6 +28,25 @@ export default function ManageAccountScreen() {
       ],
     );
   };
+
+  useEffect(()=>{
+    const fetchUser = async () => {
+      try{
+        const user = auth.currentUser;
+        if(user){
+          const userRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(userRef);
+          if(docSnap.exists){
+            setName(docSnap.data().name);
+            setEmail(user.email);
+          }
+        }
+      }catch(error){
+        console.error('error fetching username and email;', error);
+      }
+    }
+    fetchUser();
+  },[]);
 
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? '#f5f5f5' : '#1f1f1f' }]}>

@@ -1,20 +1,44 @@
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useContext,useState,useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from './ThemeContext'; 
+import { signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { auth,db } from '../Firebase';
 
 export default function UserScreen() {
     const navigation = useNavigation();
     const { isDarkMode } = useContext(ThemeContext);
-    const userName = 'user';
+    const [userName, setUsername] = useState('');
 
     const handleNavigate = (screen) => {
         navigation.navigate(screen);
     }
 
-    const handleSignOut = () => {
-        navigation.navigate('Welcome');
+    const handleSignOut = async () => {
+        await signOut(auth);
+        navigation.reset({index: 0, routes: [{name: 'Welcome'}]});
     }
+
+    
+
+    useEffect(()=>{
+        const fetchUserName = async () => {
+            try{
+                const user = auth.currentUser;
+                if(user){
+                    const userRef = doc(db, 'users', user.uid);
+                    const docSnap = await getDoc(userRef);
+                    if(docSnap.exists()){
+                        setUsername(docSnap.data().name);
+                    }
+                }
+            }catch(error){
+                console.error('Error fetching username;', error);
+            }
+        };
+        fetchUserName();
+    },[]); 
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: isDarkMode ? '#f5f5f5' : '#1f1f1f' }]}>
