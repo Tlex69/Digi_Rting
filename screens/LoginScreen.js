@@ -17,7 +17,7 @@ export default function LoginScreen() {
     console.log('Login');
     signInWithEmailAndPassword(auth, email, password).then((userCrendential) => {
       const user = userCrendential.user;
-      console.log(user.uid);
+      console.log(auth);
       navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
     }).catch((error) => {
       const errorCode = error.code;
