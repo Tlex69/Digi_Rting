@@ -1,13 +1,41 @@
 import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeftIcon } from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../Firebase';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [uid, setUid] = useState('');
+  const [name, setName] = useState('');
   const navigation = useNavigation();
+
+  const UserLogin = async () => {
+    console.log('Login');
+    signInWithEmailAndPassword(auth, email, password).then((userCrendential) => {
+      const user = userCrendential.user;
+      console.log(user.uid);
+      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+    }).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      alert(errorCode + " " + errorMessage);
+    })
+  }
+
+  useEffect(() => {
+    async function CheckLogin() {
+      onAuthStateChanged((user) => {
+        if (user) {
+          navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+        }
+      });
+    }
+    CheckLogin();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -49,7 +77,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.loginButton}
-            onPress={() => navigation.navigate('Home')}
+            onPress={() => UserLogin()}
           >
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
@@ -57,7 +85,7 @@ export default function LoginScreen() {
         <Text style={styles.orText}>or</Text>
         <View style={styles.socialLoginContainer}>
           <TouchableOpacity style={styles.socialLoginButton}>
-            <Image 
+            <Image
               source={require('../assets/img/google.png')}
               style={styles.socialLoginIcon}
             />

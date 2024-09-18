@@ -1,6 +1,8 @@
 import { Alert, View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../Firebase';
 
 export default function ForgotScreen() {
   const [email, setEmail] = useState('');
@@ -8,13 +10,20 @@ export default function ForgotScreen() {
 
   const handleResetPassword = () => {
     // ทำการรีเซ็ตรหัสผ่านที่นี่
-    Alert.alert(
-      'Reset Password',
-      'A password reset link has been sent to your email address.',
-      [
-        { text: 'OK', onPress: () => navigation.navigate('Login') }, // พาผู้ใช้กลับไปที่หน้าล็อกอิน
-      ]
-    );
+    sendPasswordResetEmail(auth, email).then(() => {
+      Alert.alert(
+        'Reset Password',
+        'A password reset link has been sent to your email address.',
+        [
+          { text: 'OK', onPress: () => navigation.navigate('Login') }, // พาผู้ใช้กลับไปที่หน้าล็อกอิน
+        ]
+      );
+    }).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      alert(errorCode + " " + errorMessage);
+    })
+
   };
 
   return (

@@ -4,6 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import { ArrowLeftIcon } from 'react-native-heroicons/solid';
 import { useNavigation } from '@react-navigation/native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth, db } from '../Firebase';
 
 export default function RegisterScreen() {
   const navigation = useNavigation();
@@ -11,6 +14,26 @@ export default function RegisterScreen() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const RegisterUser = async () => {
+    console.log("Register");
+    createUserWithEmailAndPassword(auth, email, password).then(async (userCredential) => {
+      const user = userCredential.user;
+      const uid = user.uid;
+      console.log(uid);
+
+      await setDoc(doc(db, "users", uid), {
+        "name": username,
+      });
+
+      alert("Register Success!!");
+      navigation.navigate('Login');
+    }).catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      alert("error " + errorMessage);
+    })
+  }
 
   return (
     <View style={styles.container}>
@@ -54,7 +77,7 @@ export default function RegisterScreen() {
           />
           <TouchableOpacity
             style={styles.registerButton}
-            onPress={() => navigation.navigate('Login')}
+            onPress={() => RegisterUser()}
           >
             <Text style={styles.registerButtonText}>Register</Text>
           </TouchableOpacity>

@@ -1,19 +1,23 @@
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
-import React, { useContext } from 'react';
+import React, { useContext,useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from './ThemeContext'; 
+import { signOut } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
+import { auth,db } from '../Firebase';
 
 export default function UserScreen() {
     const navigation = useNavigation();
     const { isDarkMode } = useContext(ThemeContext);
-    const userName = 'user';
+    const [userName, setUsername] = useState('user');
 
     const handleNavigate = (screen) => {
         navigation.navigate(screen);
     }
 
-    const handleSignOut = () => {
-        navigation.navigate('Welcome');
+    const handleSignOut = async () => {
+        await signOut(auth);
+        navigation.reset({index: 0, routes: [{name: 'Welcome'}]});
     }
 
     return (
