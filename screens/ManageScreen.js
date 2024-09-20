@@ -1,9 +1,10 @@
-import React, { useState, useContext,useEffect } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { ThemeContext } from './ThemeContext'; // Import the ThemeContext
-import { doc, getDoc } from 'firebase/firestore';
-import { auth,db } from '../Firebase';
+import { sendEmailVerification, updateEmail, deleteUser } from 'firebase/auth';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { auth, db } from '../Firebase';
 
 export default function ManageAccountScreen() {
   const [email, setEmail] = useState('');
@@ -11,42 +12,69 @@ export default function ManageAccountScreen() {
   const navigation = useNavigation();
   const { isDarkMode } = useContext(ThemeContext); // Access the theme context
 
-  const handleUpdateProfile = () => {
-    Alert.alert('Profile Updated', 'Your profile has been updated successfully.');
+  const handleUpdateProfile = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        await updateEmail(user, email);
+        await sendEmailVerification(user);
+        Alert.alert(
+          'Verification Email Sent',
+          'Please check your inbox to verify your new email address before it is changed.'
+        );
+        const userRef = doc(db, 'users', user.uid);
+        await updateDoc(userRef, { name: name });
+      } catch (error) {
+        Alert.alert('Failed to update profile', error.message);
+      }
+    }
   };
 
   const handleDeleteUser = () => {
-    Alert.alert(
-      'Delete Account',
-      'Are you sure you want to delete your account? This action cannot be undone.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', onPress: () => {
-          console.log('Account deleted');
-          Alert.alert('Account Deleted', 'Your account has been deleted.');
-        }},
-      ],
-    );
+    const user = auth.currentUser; 
+    
+    if (user) {
+      Alert.alert(
+        'Delete Account',
+        'Are you sure you want to delete your account? This action cannot be undone.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            onPress: async () => {
+              try {
+                await deleteUser(user);
+                Alert.alert('Account Deleted', 'Your account has been deleted.');
+                navigation.navigate('Welcome');
+              } catch (error) {
+                Alert.alert('Failed to delete account', error.message);
+              }
+            }
+          },
+        ],
+      );
+    } else {
+      Alert.alert('Error', 'No user is currently logged in.');
+    }
   };
-
-  useEffect(()=>{
+  useEffect(() => {
     const fetchUser = async () => {
-      try{
+      try {
         const user = auth.currentUser;
-        if(user){
+        if (user) {
           const userRef = doc(db, 'users', user.uid);
           const docSnap = await getDoc(userRef);
-          if(docSnap.exists){
+          if (docSnap.exists) {
             setName(docSnap.data().name);
             setEmail(user.email);
           }
         }
-      }catch(error){
-        console.error('error fetching username and email;', error);
+      } catch (error) {
+        console.error('error fetching username and email:', error);
       }
-    }
+    };
     fetchUser();
-  },[]);
+  }, []);
 
   return (
     <View style={[styles.container, { backgroundColor: isDarkMode ? '#f5f5f5' : '#1f1f1f' }]}>
