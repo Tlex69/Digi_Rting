@@ -16,14 +16,9 @@ export default function ManageAccountScreen() {
     const user = auth.currentUser;
     if (user) {
       try {
-        await updateEmail(user, email);
-        await sendEmailVerification(user);
-        Alert.alert(
-          'Verification Email Sent',
-          'Please check your inbox to verify your new email address before it is changed.'
-        );
         const userRef = doc(db, 'users', user.uid);
         await updateDoc(userRef, { name: name });
+        Alert.alert("Update username success!!");
       } catch (error) {
         Alert.alert('Failed to update profile', error.message);
       }
@@ -81,7 +76,12 @@ export default function ManageAccountScreen() {
       <Text style={[styles.header, { color: isDarkMode ? '#333' : 'white' }]}>Manage Account</Text>
 
       <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: isDarkMode ? '#333' : 'white' }]}>Name</Text>
+        <Text style={[styles.header2, { color: isDarkMode ? '#333' : 'white' }]}>{email} </Text>
+      </View>
+
+
+      <View style={styles.formGroup}>
+        <Text style={[styles.label, { color: isDarkMode ? '#333' : 'white' }]}>Username</Text>
         <TextInput
           style={[styles.input, { color: isDarkMode ? '#444343' : '#fff', backgroundColor: isDarkMode ? '#fff' : '#333' }]}
           value={name}
@@ -89,21 +89,12 @@ export default function ManageAccountScreen() {
         />
       </View>
 
-      <View style={styles.formGroup}>
-        <Text style={[styles.label, { color: isDarkMode ? '#333' : 'white' }]}>Email</Text>
-        <TextInput
-          style={[styles.input, { color: isDarkMode ? '#444343' : '#fff', backgroundColor: isDarkMode ? '#fff' : '#333' }]}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-      </View>
-
+      
       <TouchableOpacity
         style={[styles.button, { backgroundColor: '#eab308' }]}
         onPress={handleUpdateProfile}
       >
-        <Text style={styles.buttonText}>Update Profile</Text>
+        <Text style={styles.buttonText}>Update Username</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -131,7 +122,13 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  header2: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    alignSelf: 'center',
   },
   formGroup: {
     marginBottom: 15,
@@ -143,6 +140,11 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: '#eab308',
+    borderRadius: 4,
+    padding: 10,
+    fontSize: 16,
+  },
+  email: {
     borderRadius: 4,
     padding: 10,
     fontSize: 16,
